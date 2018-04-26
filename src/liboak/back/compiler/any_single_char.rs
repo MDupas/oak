@@ -58,7 +58,7 @@ impl CompileExpr for AnySingleCharCompiler
             $success
           }
           None => {
-            state.error("<character>");
+            state.error("<character>"); //TODO : remplacer par une variable indiquant l'atomKind
             $failure
           }
         }

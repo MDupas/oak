@@ -43,6 +43,11 @@ pub trait ExprByIndex
   fn expr_by_index(&self, index: usize) -> Expression;
 }
 
+pub enum AtomKind {
+  Char,
+  Byte
+}
+
 pub struct Grammar<'a, 'b:'a, ExprInfo>
 {
   pub cx: &'a ExtCtxt<'b>,
@@ -53,7 +58,8 @@ pub struct Grammar<'a, 'b:'a, ExprInfo>
   pub stream_alias: RItem,
   pub rust_functions: HashMap<Ident, RItem>,
   pub rust_items: Vec<RItem>,
-  pub attributes: GrammarAttributes
+  pub attributes: GrammarAttributes,
+  pub atom_kind: AtomKind
 }
 
 impl<'a, 'b, ExprInfo> Grammar<'a, 'b, ExprInfo>
@@ -70,7 +76,8 @@ impl<'a, 'b, ExprInfo> Grammar<'a, 'b, ExprInfo>
       stream_alias: quote_item!(cx, pub type Stream<'a> = StrStream<'a>;).unwrap(),
       rust_functions: HashMap::new(),
       rust_items: vec![],
-      attributes: GrammarAttributes::default()
+      attributes: GrammarAttributes::default(),
+      atom_kind: AtomKind::Char
     }
   }
 
