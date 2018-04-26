@@ -18,6 +18,8 @@
 
 #![feature(proc_macro)]
 extern crate syntex_pos;
+extern crate proc_macro;
+extern crate proc_macro2;
 
 pub use str_stream::*;
 pub use stream::*;
