@@ -285,6 +285,8 @@ impl<'a, 'b, 'c> Context<'a, 'b, 'c>
   pub fn cx(&self) -> &'a ExtCtxt<'b> {
     &self.grammar.cx
   }
+
+  pub fn atom_kind(&self) -> AtomKind { self.atom_kind() } //TODO : did I can do that ?
 }
 
 #[derive(Clone)]

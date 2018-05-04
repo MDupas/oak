@@ -40,7 +40,8 @@ impl<'a, 'b> IGrammar<'a, 'b>
       stream_alias: agrammar.stream_alias,
       rust_functions: agrammar.rust_functions,
       rust_items: agrammar.rust_items,
-      attributes: agrammar.attributes
+      attributes: agrammar.attributes,
+      atom_kind: agrammar.atom_kind
     };
     grammar.exprs_info = exprs_info.into_iter()
       .map(|e| ExprIType::infer(e.span))
@@ -77,7 +78,8 @@ impl<'a, 'b> IGrammar<'a, 'b>
       stream_alias: self.stream_alias,
       rust_functions: self.rust_functions,
       rust_items: self.rust_items,
-      attributes: self.attributes
+      attributes: self.attributes,
+      atom_kind: self.atom_kind
     }
   }
 

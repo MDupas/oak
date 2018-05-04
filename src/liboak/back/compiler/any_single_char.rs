@@ -51,6 +51,10 @@ impl CompileExpr for AnySingleCharCompiler
     continuation: Continuation) -> RExpr
   {
     let pattern = (self.matched_pattern)(context);
+    let atom_kind = match context.atom_kind() {
+      AtomKind::Char => {"<character>"},
+      AtomKind::Byte => {"<byte>"},
+    };
     continuation
       .map_success(|success, failure| quote_expr!(context.cx(),
         match state.next() {
@@ -58,7 +62,7 @@ impl CompileExpr for AnySingleCharCompiler
             $success
           }
           None => {
-            state.error("<character>"); //TODO : remplacer par une variable indiquant l'atomKind
+            state.error($atom_kind);
             $failure
           }
         }
