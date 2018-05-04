@@ -16,22 +16,19 @@
 //!
 //! This library is used by the generated code of Oak and is also necessary to any Oak users for interfacing with the code generated. A PEG combinator returns a `ParseState`, please consult the methods `into_result` or `unwrap_data` as they are good starting point for retrieving useful information.
 
-#![feature(proc_macro)]
 extern crate syntex_pos;
-extern crate proc_macro;
-extern crate proc_macro2;
 
 pub use str_stream::*;
 pub use stream::*;
 pub use parse_state::*;
-pub use token_stream::*;
+//pub use token_stream::*;
 use syntex_pos::{BytePos, mk_sp};
 
 pub mod str_stream;
 pub mod parse_state;
 pub mod stream;
 pub mod file_map_stream;
-pub mod token_stream;
+//pub mod token_stream;
 
 pub fn make_span(lo: usize, hi: usize) -> Span {
   mk_sp(

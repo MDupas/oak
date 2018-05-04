@@ -286,7 +286,7 @@ impl<'a, 'b, 'c> Context<'a, 'b, 'c>
     &self.grammar.cx
   }
 
-  pub fn atom_kind(&self) -> AtomKind { self.atom_kind() } //TODO : did I can do that ?
+  pub fn atom_kind(&self) -> AtomKind { self.grammar.atom_kind }
 }
 
 #[derive(Clone)]

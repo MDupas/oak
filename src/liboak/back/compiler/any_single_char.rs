@@ -52,8 +52,8 @@ impl CompileExpr for AnySingleCharCompiler
   {
     let pattern = (self.matched_pattern)(context);
     let atom_kind = match context.atom_kind() {
-      AtomKind::Char => {"<character>"},
-      AtomKind::Byte => {"<byte>"},
+      AtomKind::Char => "<character>",
+      AtomKind::Byte => "<byte>",
     };
     continuation
       .map_success(|success, failure| quote_expr!(context.cx(),

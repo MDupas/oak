@@ -43,6 +43,7 @@ pub trait ExprByIndex
   fn expr_by_index(&self, index: usize) -> Expression;
 }
 
+#[derive(Copy,Clone)]
 pub enum AtomKind {
   Char,
   Byte
