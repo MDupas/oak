@@ -35,7 +35,7 @@ pub fn typecheck<'a, 'b>(cx: &'a ExtCtxt<'b>, fgrammar: FGrammar) -> Partial<TGr
       .and_then(|grammar | extract_atom_kind(grammar))
     .and_then(|grammar| typing::type_inference(grammar))
 }
-
+//TODO : extraire l'atom kind
 fn at_least_one_rule_declared(cx: &ExtCtxt, fgrammar: FGrammar) -> Partial<FGrammar> {
   if fgrammar.rules.len() == 0 {
     cx.parse_sess.span_diagnostic.err(
