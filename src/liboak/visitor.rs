@@ -16,6 +16,7 @@
 
 use ast::*;
 use ast::Expression::*;
+use ast::Bytes;
 
 pub trait Visitor<R> : ExprByIndex
 {
@@ -24,6 +25,7 @@ pub trait Visitor<R> : ExprByIndex
   }
 
   fn visit_str_literal(&mut self, _this: usize, _lit: String) -> R;
+  fn visit_byte_literal(&mut self, _this: usize, _lit: Bytes) -> R;
   fn visit_non_terminal_symbol(&mut self, _this: usize, _rule: Ident) -> R;
   fn visit_atom(&mut self, _this: usize) -> R;
 
@@ -82,6 +84,7 @@ pub trait Visitor<R> : ExprByIndex
 /// We need this macro for factorizing the code since we can not specialize a trait on specific type parameter (we would need to specialize on `()` here).
 macro_rules! unit_visitor_impl {
   (str_literal) => (fn visit_str_literal(&mut self, _this: usize, _lit: String) -> () {});
+  (byte_literal) => (fn visit_byte_literal(&mut self, _this: usize, _lit: Bytes) -> () {});
   (non_terminal) => (fn visit_non_terminal_symbol(&mut self, _this: usize, _rule: Ident) -> () {});
   (atom) => (fn visit_atom(&mut self, _this: usize) -> () {});
   (any_single_char) => (fn visit_any_single_char(&mut self, _this: usize) -> () {});
@@ -104,6 +107,9 @@ pub fn walk_expr<R, V: ?Sized>(visitor: &mut V, this: usize) -> R where
   match visitor.expr_by_index(this) {
     StrLiteral(lit) => {
       visitor.visit_str_literal(this, lit)
+    }
+    ByteLiteral(bytes) => {
+      visitor.visit_byte_literal(this, bytes)
     }
     AnySingleChar => {
       visitor.visit_any_single_char(this)

@@ -83,6 +83,8 @@ grammar! oak {
     / "(" rule_rhs ")"
     / .. (!~parse_item !rule_lhs ~rs_ident > NonTerminalSymbol) > .alloc_expr
     / "[" char_class "]"
+    //TODO add u8
+
 
   char_class =
     \ .. !"]" > MissingStringLiteral

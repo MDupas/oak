@@ -68,7 +68,11 @@ impl<'a, 'b, 'c> TypeCompiler<'a, 'b, 'c>
   }
 
   fn atom_type(&self) -> RTy {
-    quote_ty!(self.grammar.cx, char)
+    match self.grammar.atom_kind {
+      AtomKind::Char => quote_ty!(self.grammar.cx, char),
+      AtomKind::Byte => quote_ty!(self.grammar.cx, u8),
+    }
+    //quote_ty!(self.grammar.cx, char)
   }
 
   fn list_type(&self, expr_idx: usize) -> RTy {

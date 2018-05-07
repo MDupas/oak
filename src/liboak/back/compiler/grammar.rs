@@ -40,13 +40,17 @@ impl<'a, 'b> GrammarCompiler<'a, 'b>
 
   fn compile_grammar_module(&self, module_content: Vec<RItem>) -> RItem {
     let grammar_name = self.grammar.name;
+    let atom_kind = match self.grammar.atom_kind {
+      AtomKind::Char => quote_item!(self.cx(), use oak_runtime::str_stream::StrStream;),
+      AtomKind::Byte => quote_item!(self.cx(), use oak_runtime::byte_stream::ByteStream;),
+    };
     let module = quote_item!(self.cx(),
       pub mod $grammar_name
       {
         #![allow(unused_mut)]
         use oak_runtime::stream::*;
         #[allow(unused_imports)]
-        use oak_runtime::str_stream::StrStream;
+        $atom_kind
         #[allow(unused_imports)]
         use std::ops::Range;
 

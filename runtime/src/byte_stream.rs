@@ -1,4 +1,4 @@
-// Copyright 2018 Marin Dupas (UPMC)
+// Copyright 2018 Marin Dupas (Sorbonne Université)
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
 //! Implementation of `Stream` for `Vec<u8>` type. It implements all traits required by `CharStream`.
 pub use std::ops::Range;
 pub use syntex_pos::Span;
+use stream::*;
+use std::cmp::Ordering;
+use make_span;
 
 impl Stream for Vec<u8>
 {
@@ -55,14 +58,13 @@ impl ByteStream
         &self.bytes[self.offset]
     }
 
-    /*
-    Repérer quand un caractère ne prend pas de place ?
-    */
+    // TODO : Repérer quand un caractère ne prend pas de place ?
     pub fn line_column(&self) -> (usize, usize) {
         let mut line = 0;
         let mut column = 0;
+        let u8_carriage = '\n' as u8;
         for x in 0..self.offset {
-            if self.bytes == '\n' {
+            if self.bytes[x] == u8_carriage {
                 column += 1;
                 line = 0;
             }
@@ -153,9 +155,10 @@ impl ConsumePrefix<&'static str> for ByteStream
         }
     }
 }
-impl<T: Into<Vec<u8>>> ConsumeByte<T> for ByteStream
-{ // Maybe I should convert a slice of bytes into T
-    fn consume_prefix(&mut self, prefix: T) -> bool {
+
+impl ConsumePrefix<UnisgnedInt> for ByteStream
+{//TODO : verif que tout est ok
+    fn consume_prefix(&mut self, prefix: UnsignedInt) -> bool {
         let mut count = 0;
         for byte in prefix.into() {
             if self.bytes[self.offset + count].clone() == byte {
@@ -185,8 +188,8 @@ impl StreamSpan for Range<ByteStream>
     type Output = Span;
     fn stream_span(&self) -> Self::Output {
         make_span(
-            self.start.bytes_offset,
-            self.end.bytes_offset)
+            self.start.offset,
+            self.end.offset)
     }
 }
 

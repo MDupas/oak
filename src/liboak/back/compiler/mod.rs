@@ -19,6 +19,7 @@ pub mod value;
 mod grammar;
 mod rule;
 mod str_literal;
+mod byte_literal;
 mod sequence;
 mod choice;
 mod any_single_char;
@@ -33,6 +34,7 @@ mod spanned_expr;
 pub use back::compiler::grammar::*;
 pub use back::context::*;
 use back::compiler::str_literal::*;
+use back::compiler::byte_literal::*;
 use back::compiler::sequence::*;
 use back::compiler::choice::*;
 use back::compiler::any_single_char::*;
@@ -64,6 +66,7 @@ pub fn parser_compiler(grammar: &TGrammar, idx: usize) -> Box<CompileExpr> {
   else {
     match grammar.expr_by_index(idx) {
       StrLiteral(lit) => Box::new(StrLiteralCompiler::parser(lit)),
+      ByteLiteral(bytes) => Box::new(ByteLiteralCompiler::parser(bytes)),
       CharacterClass(classes) => Box::new(CharacterClassCompiler::parser(classes)),
       AnySingleChar => Box::new(AnySingleCharCompiler::parser()),
       Sequence(seq) => Box::new(SequenceCompiler::parser(seq)),
@@ -85,6 +88,7 @@ pub fn parser_compiler(grammar: &TGrammar, idx: usize) -> Box<CompileExpr> {
 pub fn recognizer_compiler(grammar: &TGrammar, idx: usize) -> Box<CompileExpr> {
   match grammar.expr_by_index(idx) {
     StrLiteral(lit) => Box::new(StrLiteralCompiler::recognizer(lit)),
+    ByteLiteral(bytes) => Box::new(ByteLiteralCompiler::recognizer(bytes)),
     CharacterClass(classes) => Box::new(CharacterClassCompiler::recognizer(classes)),
     AnySingleChar => Box::new(AnySingleCharCompiler::recognizer()),
     Sequence(seq) => Box::new(SequenceCompiler::recognizer(seq)),

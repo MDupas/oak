@@ -240,9 +240,20 @@ impl ItemSpan for Rule
 }
 
 #[derive(Clone, Debug)]
+pub enum Bytes
+{
+  U8(u8),
+  U16(u16),
+  U32(u32),
+  U64(u64),
+  U128(u128)
+}
+
+#[derive(Clone, Debug)]
 pub enum Expression
 {
   StrLiteral(String), // "match me"
+  ByteLiteral(Bytes),
   AnySingleChar, // .
   CharacterClass(CharacterClassExpr), // [0-9]
   NonTerminalSymbol(Ident), // a_rule

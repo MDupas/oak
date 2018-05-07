@@ -266,3 +266,4 @@ impl<S, T, P> ConsumePrefix<P> for ParseState<S, T> where
     self.current.consume_prefix(prefix)
   }
 }
+// TODO : ajouter le trait cree

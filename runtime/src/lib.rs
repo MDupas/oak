@@ -21,6 +21,7 @@ extern crate syntex_pos;
 pub use str_stream::*;
 pub use stream::*;
 pub use parse_state::*;
+pub use byte_stream::*;
 //pub use token_stream::*;
 use syntex_pos::{BytePos, mk_sp};
 
@@ -28,6 +29,7 @@ pub mod str_stream;
 pub mod parse_state;
 pub mod stream;
 pub mod file_map_stream;
+pub mod byte_stream;
 //pub mod token_stream;
 
 pub fn make_span(lo: usize, hi: usize) -> Span {
