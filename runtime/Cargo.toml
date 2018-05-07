@@ -16,10 +16,6 @@ path = "src/lib.rs"
 
 [dependencies]
 syntex_pos = "0.58.1"
-proc-macro2 = { version = "0.2", features = ["nightly"] }
 
 [dev-dependencies.syntex_syntax]
 version = "0.58.1"
-
-[target.'cfg(procmacro2_semver_exempt)']
-rustflags = ["procmacro2_semver_exempt"]
