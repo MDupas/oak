@@ -30,12 +30,12 @@ pub mod typing;
 pub fn typecheck<'a, 'b>(cx: &'a ExtCtxt<'b>, fgrammar: FGrammar) -> Partial<TGrammar<'a, 'b>> {
   Partial::Value(fgrammar)
     .and_then(|grammar| at_least_one_rule_declared(cx, grammar))
-    .and_then(|grammar| analysis::analyse(cx, grammar))
+    .and_then(|grammar| analysis::analyse(cx, grammar))/*
     .and_then(|grammar| extract_stream_type(grammar))
-      .and_then(|grammar | extract_atom_kind(grammar))
+    .and_then(|grammar | extract_atom_kind(grammar))*/
     .and_then(|grammar| typing::type_inference(grammar))
 }
-//TODO : extraire l'atom kind
+
 fn at_least_one_rule_declared(cx: &ExtCtxt, fgrammar: FGrammar) -> Partial<FGrammar> {
   if fgrammar.rules.len() == 0 {
     cx.parse_sess.span_diagnostic.err(
@@ -65,7 +65,6 @@ fn extract_stream_type<'a, 'b>(mut grammar: AGrammar<'a, 'b>)
     if let Some(ty) = stream_alias {
       grammar.stream_alias = ty.clone();
       stream_redefined = true;
-      //extract_atom_kind(grammar, ty.deref().clone()); //TODO : je peux placer ca la ?
     }
   }
   if !stream_redefined {

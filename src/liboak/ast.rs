@@ -43,7 +43,7 @@ pub trait ExprByIndex
   fn expr_by_index(&self, index: usize) -> Expression;
 }
 
-#[derive(Copy,Clone)]
+#[derive(Copy,Clone,Eq, PartialEq)]
 pub enum AtomKind {
   Char,
   Byte
@@ -240,20 +240,20 @@ impl ItemSpan for Rule
 }
 
 #[derive(Clone, Debug)]
-pub enum Bytes
+pub enum ByteType
 {
-  U8(u8),
-  U16(u16),
-  U32(u32),
-  U64(u64),
-  U128(u128)
+  U8,
+  U16/*,
+  U32,
+  U64,
+  U128*/
 }
 
 #[derive(Clone, Debug)]
 pub enum Expression
 {
   StrLiteral(String), // "match me"
-  ByteLiteral(Bytes),
+  ByteAtom(ByteType), // u16
   AnySingleChar, // .
   CharacterClass(CharacterClassExpr), // [0-9]
   NonTerminalSymbol(Ident), // a_rule

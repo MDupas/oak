@@ -37,18 +37,23 @@ impl<R> CharStream for R where
 {}
 
 /// Requirements of a stream of bytes.
-pub trait U8Stream //TODO : choisir le trait
+pub trait ByteStream
 : Clone + Ord + HasNext + Eq
 + Iterator<Item=u8>
-+ ConsumePrefix<UnsignedInt>
++ ConsumeByte
 {}
 
-impl<R> U8Stream for R where
+impl<R> ByteStream for R where
     R: Clone + Ord + HasNext + Eq
     + Iterator<Item=u8>
-    + ConsumePrefix<u8>
-
+    + ConsumeByte
 {}
+
+pub trait ConsumeByte
+{
+    fn consume_u8(&mut self) -> Option<u8>;
+    fn consume_u16(&mut self) -> Option<u16>;
+}
 
 /// Produces a textual representation of the current position in the stream. For example, it can be `2:5` if the position is at line 2 and column 5.
 pub trait Location

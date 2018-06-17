@@ -135,6 +135,8 @@ impl<'a, 'b> Visitor<IType> for Surface<'a, 'b>
     IType::Invisible
   }
 
+  fn visit_byte_atom(&mut self, _this: usize, _byte_ty: ByteType) -> IType { IType::Invisible } //TODO : correct ?
+
   fn visit_syntactic_predicate(&mut self, _this: usize, _child: usize) -> IType {
     IType::Invisible
   }

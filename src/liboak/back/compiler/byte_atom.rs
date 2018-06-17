@@ -13,39 +13,45 @@
 // limitations under the License.
 
 use back::compiler::*;
-use ast::Bytes;
+use ast::ByteType;
 
-pub struct ByteLiteralCompiler
+pub struct ByteAtomCompiler
 {
-    literal: Bytes
+    byte_type: ByteType
 }
 
-impl ByteLiteralCompiler
+impl ByteAtomCompiler
 {
-    pub fn recognizer(literal: Bytes) -> ByteLiteralCompiler {
-        ByteLiteralCompiler {
-            literal: literal
+    pub fn recognizer(byte_type: ByteType) -> ByteAtomCompiler {
+        ByteAtomCompiler {
+            byte_type
         }
     }
 
-    pub fn parser(literal: Bytes) -> ByteLiteralCompiler {
-        ByteLiteralCompiler::recognizer(literal)
+    pub fn parser(byte_type: ByteType) -> ByteAtomCompiler {
+        ByteAtomCompiler::recognizer(byte_type)
     }
 }
 
-impl CompileExpr for ByteLiteralCompiler
+impl CompileExpr for ByteAtomCompiler
 {
     fn compile_expr<'a, 'b, 'c>(&self, context: &mut Context<'a, 'b, 'c>,
                                 continuation: Continuation) -> RExpr
     {
-        let lit = self.literal.as_str();//TODO correct
+        //let byte_ty = self.byte_type;
+        let byte_ty = quote_item!(context.cx(), self.byte_type);
+        let consume_byte = match self.byte_type {
+            ByteType::U8 => quote_item!(context.cx(), oak_runtime::byte_stream::consume_u8),
+            ByteType::U16=> quote_item!(context.cx(), oak_runtime::byte_stream::consume_u16)
+        }; //TODO : rajouter le pattern d'any single char (+ match dans le code renvoyé)
+
         continuation
             .map_success(|success, failure| quote_expr!(context.cx(),
-        if state.consume_prefix($lit) {
+        if state.$consume_byte() {
           $success
         }
         else {
-          state.error($lit);
+          state.error($byte_ty);
           $failure
         }
       ))

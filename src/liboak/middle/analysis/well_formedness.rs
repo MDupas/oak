@@ -250,6 +250,8 @@ impl<'a, 'b, 'c> Visitor<WFA> for WellFormedness<'a, 'b, 'c>
     wfa
   }
 
+  fn visit_byte_atom(&mut self, _this: usize, _byte_type: ByteType) -> WFA { WFA::all_true() }
+
   fn visit_non_terminal_symbol(&mut self, _this: usize, rule: Ident) -> WFA {
     self.visit_rule(rule)
   }

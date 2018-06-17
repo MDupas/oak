@@ -266,4 +266,9 @@ impl<S, T, P> ConsumePrefix<P> for ParseState<S, T> where
     self.current.consume_prefix(prefix)
   }
 }
-// TODO : ajouter le trait cree
+
+impl<S, T> ConsumeByte for ParseState<S, T> where
+  S: ConsumeByte {
+  fn consume_u8(&mut self) -> Option<u8> { self.current.consume_u8() }
+  fn consume_u16(&mut self) -> Option<u16> { self.current.consume_u16() }
+}

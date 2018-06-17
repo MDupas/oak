@@ -139,6 +139,7 @@ impl<'a, 'b> Visitor<()> for Depth<'a, 'b>
   unit_visitor_impl!(str_literal);
   unit_visitor_impl!(non_terminal);
   unit_visitor_impl!(atom);
+  unit_visitor_impl!(byte_atom); //TODO : tempo, I don't know what am I doing
 
   // Depth rules
 

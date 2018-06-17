@@ -21,31 +21,31 @@ use make_span;
 
 impl Stream for Vec<u8>
 {
-    type Output = ByteStream;
-    fn stream<>(self) -> ByteStream {
-        ByteStream::new(self)
+    type Output = U8Stream;
+    fn stream<>(self) -> U8Stream {
+        U8Stream::new(self)
     }
 }
 
 /// Represents a stream from a `Vec<u8>`. It implements all traits required by `CharStream`.
 #[derive(Clone)]
-pub struct ByteStream
+pub struct U8Stream
 {
     bytes: Vec<u8>,
     offset: usize
 }
 
-impl ByteStream
+impl U8Stream
 {
-    fn new(bytes: Vec<u8>) -> ByteStream {
-        ByteStream {
+    fn new(bytes: Vec<u8>) -> U8Stream {
+        U8Stream {
             bytes,
             offset: 0
         }
     }
 
     #[inline(always)]
-    fn assert_same_raw_data(&self, other: &ByteStream) {
+    fn assert_same_raw_data(&self, other: &U8Stream) {
         debug_assert!(self.bytes.as_ptr() == other.bytes.as_ptr(),
                       "Operations between two streams are only defined when they share the same raw data.");
     }
@@ -76,7 +76,7 @@ impl ByteStream
     }
 }
 
-impl Iterator for ByteStream
+impl Iterator for U8Stream
 {
     type Item = u8;
     fn next(&mut self) -> Option<Self::Item> {
@@ -90,7 +90,7 @@ impl Iterator for ByteStream
     }
 }
 
-impl PartialEq for ByteStream
+impl PartialEq for U8Stream
 {
     fn eq(&self, other: &Self) -> bool {
         self.assert_same_raw_data(other);
@@ -98,9 +98,9 @@ impl PartialEq for ByteStream
     }
 }
 
-impl Eq for ByteStream {}
+impl Eq for U8Stream {}
 
-impl PartialOrd for ByteStream
+impl PartialOrd for U8Stream
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.assert_same_raw_data(other);
@@ -108,7 +108,7 @@ impl PartialOrd for ByteStream
     }
 }
 
-impl Ord for ByteStream
+impl Ord for U8Stream
 {
     fn cmp(&self, other: &Self) -> Ordering {
         self.assert_same_raw_data(other);
@@ -117,7 +117,7 @@ impl Ord for ByteStream
 }
 
 
-impl Location for ByteStream
+impl Location for U8Stream
 {
     fn location(&self) -> String {
         let (line, column) = self.line_column();
@@ -125,7 +125,7 @@ impl Location for ByteStream
     }
 }
 
-impl CodeSnippet for ByteStream
+impl CodeSnippet for U8Stream
 {
     fn code_snippet(&self, _len_hint: usize) -> String {
         if ! self.has_next() {
@@ -136,7 +136,7 @@ impl CodeSnippet for ByteStream
     }
 }
 
-impl ConsumePrefix<&'static str> for ByteStream
+impl ConsumePrefix<&'static str> for U8Stream
 {
     fn consume_prefix(&mut self, prefix: &'static str) -> bool {
         let mut count = 0;
@@ -156,34 +156,34 @@ impl ConsumePrefix<&'static str> for ByteStream
     }
 }
 
-impl ConsumePrefix<UnisgnedInt> for ByteStream
-{//TODO : verif que tout est ok
-    fn consume_prefix(&mut self, prefix: UnsignedInt) -> bool {
-        let mut count = 0;
-        for byte in prefix.into() {
-            if self.bytes[self.offset + count].clone() == byte {
-                count += 1;
-            } else {
-                break;
-            }
+impl ConsumeByte for U8Stream
+{
+    fn consume_u8(&mut self) -> Option<u8> {
+        let byte_consume = self.bytes.get(self.offset);
+        self.offset += 1; //TODO meilleure maniere de faire ?
+        match byte_consume {
+            None => {None},
+            Some(b_c) => {Some(*b_c)}
         }
-        if prefix.bytes().len() == count {
-            self.offset += count;
-            true
-        } else {
-            false
+    }
+    fn consume_u16(&mut self) -> Option<u16> {
+        let byte_consume1 = self.consume_u8();
+        let byte_consume2 = self.consume_u8();
+        match (byte_consume1,byte_consume2) {
+            (Some(a),Some(b)) => {Some(((b as u16) << 8) | (a as u16))}
+            _ => {None},
         }
     }
 }
 
-impl HasNext for ByteStream
+impl HasNext for U8Stream
 {
     fn has_next(&self) -> bool {
         self.offset < self.bytes.len()
     }
 }
 
-impl StreamSpan for Range<ByteStream>
+impl StreamSpan for Range<U8Stream>
 {
     type Output = Span;
     fn stream_span(&self) -> Self::Output {
@@ -197,7 +197,7 @@ impl StreamSpan for Range<ByteStream>
 mod test {
     use super::*;
 
-    fn consume_prefix_test<'a>(stream: ByteStream, prefix: &'static str,
+    fn consume_prefix_test<'a>(stream: U8Stream, prefix: &'static str,
                                prefix_match: bool, next_byte: Option<u8>)
     {
         let mut s2 = stream.clone();
@@ -207,7 +207,7 @@ mod test {
 
     #[test]
     fn test_consume_prefix() {
-        let s1 = ByteStream::new("abc".bytes());
+        let s1 = U8Stream::new("abc".bytes());
         consume_prefix_test(s1, "abc", true, None);
         consume_prefix_test(s1, "ab", true, Some('c'));
         consume_prefix_test(s1, "", true, Some('a'));

@@ -56,6 +56,7 @@ impl<'a, 'b, 'c> Visitor<()> for UndeclaredAction<'a, 'b, 'c>
   unit_visitor_impl!(sequence);
   unit_visitor_impl!(choice);
   unit_visitor_impl!(non_terminal);
+  unit_visitor_impl!(byte_atom);
 
   fn visit_semantic_action(&mut self, this: usize, _child: usize, action: Ident) {
     if !self.grammar.rust_functions.contains_key(&action) {
