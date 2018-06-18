@@ -15,7 +15,6 @@
 
 use middle::analysis::ast::*;
 use partial::Partial::*;
-use std::ops::IndexMut;
 
 pub struct TransformByteAtom<'a: 'c, 'b: 'a, 'c>
 {
@@ -25,18 +24,20 @@ pub struct TransformByteAtom<'a: 'c, 'b: 'a, 'c>
 
 impl<'a, 'b, 'c> TransformByteAtom<'a, 'b, 'c>
 {
-    pub fn analyse(mut grammar: AGrammar<'a, 'b>) -> Partial<AGrammar<'a, 'b>> { //TODO : créer un nouveau fichier dans lequel on va visiter et tout
-        let  e ={               // et récupérer l'ancien undeclared_rule
-            let mut analyser = TransformByteAtom {
-                grammar: *grammar,
-                exprs: grammar.exprs.clone()
+    pub fn analyse(mut grammar: AGrammar<'a, 'b>) -> Partial<AGrammar<'a, 'b>> {
+        if grammar.atom_kind == AtomKind::Byte {
+            let e ={
+                let mut analyser = TransformByteAtom {
+                    grammar: &grammar,
+                    exprs: grammar.exprs.clone()
+                };
+                for rule in &grammar.rules {
+                    analyser.visit_expr(rule.expr_idx);
+                }
+                analyser.exprs
             };
-            for rule in &grammar.rules {
-                analyser.visit_expr(rule.expr_idx);
-            }
-            analyser.exprs
-        };
-        grammar.exprs = e;
+            grammar.exprs = e;
+        }
         Value(grammar)
     }
 }
@@ -54,45 +55,14 @@ impl<'a, 'b, 'c> Visitor<()> for TransformByteAtom<'a, 'b, 'c>
     unit_visitor_impl!(atom);
     unit_visitor_impl!(sequence);
     unit_visitor_impl!(choice);
-    fn visit_non_terminal_symbol(&mut self, this: usize, rule: Ident) {
-        if self.grammar.atom_kind == AtomKind::Byte {
-            if rule.name.as_str() == "u8" {
-                /*
-                let mut newGrammar = self.grammar.clone();
-                newGrammar.exprs[this] = Expression::ByteAtom(ByteType::U8);
-                self.grammar = newGrammar;
-                */
-                /*
-                let mut new_grammar = self.grammar.clone();
-                let mut new_exprs = new_grammar.exprs.clone();
-                new_exprs[this] = Expression::ByteAtom(ByteType::U8);
-                new_grammar.exprs = new_exprs;
-                self.grammar = new_grammar;
-                */
-//        let mut g = &mut self.grammar;
-//        let mut e = &mut g.exprs;
-//        let mut a = &mut e[this];
-//        *a = Expression::ByteAtom(ByteType::U8);
-                if let Some(elem) = self.grammar.exprs.get_mut(1) {
-                    *elem = Expression::ByteAtom(ByteType::U8);
-                }
-//        self.grammar.exprs
-            }
-                else if rule.name.as_str() == "u16" {
-                    self.grammar.exprs[this] = Expression::ByteAtom(ByteType::U16);
-                }
-        }
-            else {
-                let contains_key = self.grammar.rules.iter()
-                    .find(|r| r.ident() == rule).is_some();
-                if !contains_key {
-                    self.grammar.expr_err(
-                        this,
-                        format!("Undeclared rule `{}`.", rule)
-                    );
-                }
-            }
-    }
-
     unit_visitor_impl!(byte_atom);
+
+    fn visit_non_terminal_symbol(&mut self, this: usize, rule: Ident) {
+        if rule.name.as_str() == "u8" {
+            self.exprs[this] = Expression::ByteAtom(ByteType::U8);
+        }
+        else if rule.name.as_str() == "u16" {
+            self.exprs[this] = Expression::ByteAtom(ByteType::U16);
+        }
+    }
 }
